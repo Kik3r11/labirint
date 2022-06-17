@@ -6,6 +6,7 @@ public class Exit : MonoBehaviour
     [SerializeField] private Material _closedMaterial;
     [SerializeField] private Material _openMaterial;
 
+
     public bool IsOpen { get; private set; }
 
     private MeshRenderer _renderer;
@@ -26,4 +27,5 @@ public class Exit : MonoBehaviour
         IsOpen = false;
         _renderer.sharedMaterial = _closedMaterial;
     }
+    
 }

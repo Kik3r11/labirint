@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class Game : MonoBehaviour
 {
@@ -11,17 +12,34 @@ public class Game : MonoBehaviour
     [Header("Objects")]
     [SerializeField] private Player _player;
     [SerializeField] private Exit _exitFromLevel;
-    
+
+    public Transform Goal;
+
+    public GameObject TextYouWon;
+    public GameObject TextYouLose;
+    public GameObject ButtonRetry;
+
+    public GameObject DialogPanel;
+    public GameObject PanelWon;
+    public Text txt1;
+
     private float _timer = 0;
     private bool _gameIsEnded = false;
 
     private void Awake()
     {
         _timer = _timerValue;
+        
     }
 
     private void Start()
     {
+        
+        TextYouWon.SetActive(false);
+        TextYouLose.SetActive(false);
+        ButtonRetry.SetActive(false);
+        DialogPanel.SetActive(false);
+        PanelWon.SetActive(false);
         _exitFromLevel.Close();
     }
 
@@ -34,6 +52,7 @@ public class Game : MonoBehaviour
         LookAtPlayerHealth();
         LookAtPlayerInventory();
         TryCompleteLevel();
+        txt1.text = $"Поздравляем, вы прошли уровень за {Time.timeSinceLevelLoad:F1}";
     }
 
     private void TimerTick()
@@ -53,11 +72,15 @@ public class Game : MonoBehaviour
         if(_exitFromLevel.IsOpen == false)
             return;
 
-        var flatExitPosition = new Vector2(_exitFromLevel.transform.position.x, _exitFromLevel.transform.position.z);
-        var flatPlayerPosition = new Vector2(_player.transform.position.x, _player.transform.position.z);
         
-        if(flatExitPosition == flatPlayerPosition)
-            Victory();
+        if(_player.transform.position.x > Goal.transform.position.x)
+        {
+            if(_player.transform.position.z > Goal.transform.position.z)
+            {
+                Victory();
+            }
+        }
+            
     }
 
     private void LookAtPlayerHealth()
@@ -77,15 +100,24 @@ public class Game : MonoBehaviour
 
     public void Victory()
     {
+        
         _gameIsEnded = true;
         _player.Disable();
-        Debug.LogError("Victory");
+        TextYouWon.SetActive(true);
+        ButtonRetry.SetActive(true);
+        PanelWon.SetActive(true);     
     }
 
     public void Lose()
     {
         _gameIsEnded = true;
         _player.Disable();
-        Debug.LogError("Lose");
+        TextYouLose.SetActive(true);
+        ButtonRetry.SetActive(true);
+        DialogPanel.SetActive(true);
+    }
+    public void RestartLevel(int numberScene)
+    {
+        SceneManager.LoadScene(numberScene);
     }
 }
